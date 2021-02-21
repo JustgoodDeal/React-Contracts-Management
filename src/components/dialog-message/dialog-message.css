@@ -1,0 +1,4 @@
+.list-group-item.dialog:hover {
+    background-color: aquamarine;
+    cursor: pointer;
+}

@@ -1,0 +1,3 @@
+.contract-status:hover ~ .contract-status-details {
+    display: block!important;
+}

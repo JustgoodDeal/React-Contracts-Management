@@ -3,7 +3,7 @@ import React from 'react';
 import './confirmation-modal.css';
 
 
-const ConfirmationModal = ({ id, bodyText, btnText }) => {
+const ConfirmationModal = ({ id, bodyText, btnText, cancelType, confirmType, handleCancel, handleConfirm }) => {
     return (
         <div className="modal fade" id={id} tabIndex="-1" role="dialog"
              aria-hidden="true">
@@ -19,8 +19,14 @@ const ConfirmationModal = ({ id, bodyText, btnText }) => {
                         <p>{bodyText}</p>
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="button" className="btn btn-primary" data-dismiss="modal">{btnText}</button>
+                        <button type="button" className="btn btn-secondary" data-dismiss="modal"
+                                onClick={() => handleCancel(cancelType)} >
+                            Cancel
+                        </button>
+                        <button type="button" className="btn btn-primary" data-dismiss="modal"
+                                onClick={() => handleConfirm(confirmType)} >
+                            {btnText}
+                        </button>
                     </div>
                 </div>
             </div>

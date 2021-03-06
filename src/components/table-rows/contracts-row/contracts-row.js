@@ -4,13 +4,13 @@ import { NavLink } from "react-router-dom";
 import './contracts-row.css';
 
 
-const ContractsRow = ({ contractEntities }) => {
-    const { id, datetime, companiesInvolvedList, status } = contractEntities;
+const ContractsRow = ({ contract, handleDeleteClick }) => {
+    const { id, creationDate, companies, status } = contract;
     return (
         <tr>
             <td className="text-center">{id}</td>
-            <td className="text-center">{datetime}</td>
-            <td className="text-center">{companiesInvolvedList.join(', ')}</td>
+            <td className="text-center">{creationDate}</td>
+            <td className="text-center">{companies.join(', ')}</td>
             <td className="text-center">{status}</td>
             <td className="text-center">
                 <div className="dropdown">
@@ -18,7 +18,8 @@ const ContractsRow = ({ contractEntities }) => {
                     </button>
                     <ul className="dropdown-menu">
                         <li><NavLink to={`/contract/${id}`} className="dropdown-item" href="#">Details</NavLink></li>
-                        <li><button className="dropdown-item" data-toggle="modal" data-target="#confirmationModal">Delete</button></li>
+                        <li><button className="dropdown-item" data-toggle="modal" data-target="#confirmationModal"
+                        onClick={() => handleDeleteClick(id)}>Delete</button></li>
                     </ul>
             </div>
             </td>

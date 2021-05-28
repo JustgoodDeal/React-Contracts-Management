@@ -1,16 +1,31 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { useHistory } from "react-router-dom";
+
+import { AuthContext, NavbarContext } from '../../context'
 
 import './dialog-message.css';
 
 
-const DialogMessage = ({ messageEntities }) => {
-    const { participantsList, datetime, author, text, isRead, currentPage } = messageEntities;
+const DialogMessage = ({ message, followedFrom }) => {
+    let history = useHistory();
+    const { userId } = useContext(AuthContext);
+    const { changeActiveLink } = useContext(NavbarContext);
+
+    const { dialogId, creationDate, sender, text, isRead } = message;
+    const senderName = sender.id === userId ? 'I' : sender.name;
+
     let leftHeaderText, lastMessageAuthor;
-    if (currentPage === 'dialogs') {
-        leftHeaderText = `Participants: ${participantsList.join(', ')}`;
-        lastMessageAuthor = `${author}: `
+    if ('participants' in message) {
+        let participantsNames = ['I'];
+        for (let participant of message.participants) {
+            if (participant.id !== userId) {
+                participantsNames.push(participant.name)
+            }
+        }
+        leftHeaderText = `Participants: ${participantsNames.join(', ')}`;
+        lastMessageAuthor = `${senderName}: `
     } else {
-        leftHeaderText = author;
+        leftHeaderText = senderName;
         lastMessageAuthor = null;
     }
 
@@ -20,11 +35,20 @@ const DialogMessage = ({ messageEntities }) => {
     } else {
         messageClass += ' text-white bg-secondary'
     }
+
+    const handleMessageClick = () => {
+        if (followedFrom) {
+            changeActiveLink(followedFrom === 'dialogs' ? 'Dialogs' : 'Contracts');
+            history.push(`/dialog/${dialogId}?followed_from=${followedFrom}`);
+        }
+    };
+
     return (
-        <div className="list-group-item dialog">
+        <div className="list-group-item dialog pb-0"
+             onClick={handleMessageClick}>
             <div className="d-flex justify-content-between">
                 <p className="text-primary font-weight-bold">{leftHeaderText}</p>
-                <p className="text-secondary">{datetime}</p>
+                <p className="text-secondary">{creationDate}</p>
             </div>
             <p className={messageClass}>
                 <span className="font-weight-bold">{lastMessageAuthor}</span>

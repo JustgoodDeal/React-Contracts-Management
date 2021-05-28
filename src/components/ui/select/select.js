@@ -3,9 +3,11 @@ import React from 'react';
 import './select.css';
 
 
-const Select = ({ options }) => {
+const Select = ({ options, value, handleChange }) => {
     return (
-        <select className="custom-select" aria-label="Default select example">
+        <select className="custom-select" aria-label="Default select example"
+                value={value ? value : undefined}
+                onChange={event => handleChange(event.target.value)} >
             {   options.map((option, ind) => {
                     return (
                         <option

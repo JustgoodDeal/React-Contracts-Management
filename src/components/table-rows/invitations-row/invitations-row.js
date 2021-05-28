@@ -1,10 +1,18 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import { Link } from "react-router-dom";
+
+import { NavbarContext } from '../../../context'
 
 import './invitations-row.css';
 
 
-const InvitationsRow = ({ invitationEntities }) => {
-    const { contractId, datetime, creator, recipient, purpose, status, actions } = invitationEntities;
+const InvitationsRow = ({ invitation, followedFrom, handleActionChoice }) => {
+    const { changeActiveLink } = useContext(NavbarContext);
+
+    const { id, contractId, creationDate, creatorName, creatorCompany, recipientName, recipientCompany, purpose, status,
+        actions, userIsCreator } = invitation;
+    const creator = userIsCreator ? 'I' : `${creatorName} (${creatorCompany})`;
+    const recipient = userIsCreator ? `${recipientName} (${recipientCompany})` : 'I';
     let actionsDisplay = '-';
     if (actions) {
         actionsDisplay = (
@@ -13,21 +21,38 @@ const InvitationsRow = ({ invitationEntities }) => {
                         data-toggle="dropdown" aria-expanded="false">
                 </button>
                 <ul className="dropdown-menu">
-                    <li><a className="dropdown-item" href="#">Accept</a></li>
-                    <li><a className="dropdown-item" href="#">Decline</a></li>
+                    <li>
+                        <button className="dropdown-item" onClick={() => handleActionChoice(id, 'accepted')}>
+                            Accept
+                        </button>
+                    </li>
+                    <li>
+                        <button className="dropdown-item" onClick={() => handleActionChoice(id, 'declined')}>
+                            Decline
+                        </button>
+                    </li>
                 </ul>
             </div>
         )
     }
+
     return (
         <tr>
-            <td className="text-center">{contractId}</td>
-            <td className="text-center">{datetime}</td>
-            <td className="text-center">{creator}</td>
-            <td className="text-center">{recipient}</td>
-            <td className="text-center">{purpose}</td>
-            <td className="text-center">{status}</td>
-            <td className="text-center">{actionsDisplay}</td>
+            {
+                followedFrom !== 'contracts' &&
+                    <td className="text-center align-middle">
+                        <Link to={`/contract/${contractId}`}
+                              onClick={() => changeActiveLink('Contracts')} >
+                            {contractId}
+                        </Link>
+                    </td>
+            }
+            <td className="text-center align-middle">{creationDate}</td>
+            <td className="text-center align-middle">{creator}</td>
+            <td className="text-center align-middle">{recipient}</td>
+            <td className="text-center align-middle">{purpose}</td>
+            <td className="text-center align-middle">{status}</td>
+            <td className="text-center align-middle">{actionsDisplay}</td>
         </tr>
     )
 };

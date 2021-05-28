@@ -6,6 +6,8 @@ import DialogsPage from "./dialogs-page";
 import HomePage from "./home-page";
 import InvitationsPage from "./invitations-page";
 import LoginPage from './login-page';
+import NotificationsPage from './notifications-page'
+import NotFoundPage from "./not-found-page";
 
 
 export {
@@ -16,5 +18,7 @@ export {
     DialogsPage,
     HomePage,
     InvitationsPage,
-    LoginPage
+    LoginPage,
+    NotFoundPage,
+    NotificationsPage
 };

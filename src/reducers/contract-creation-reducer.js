@@ -1,4 +1,4 @@
-import { ADD_CONTRACT_COMPANIES, CHANGE_CONTRACT_TEXT, FETCH_COMPANIES_SUCCESS } from './types'
+import { ADD_CONTRACT_COMPANIES, CHANGE_CONTRACT_TEXT, FETCH_COMPANIES_SUCCESS, SET_ERROR } from './types'
 
 const handlers = {
     [ADD_CONTRACT_COMPANIES]: (state, { payload }) => {
@@ -9,6 +9,7 @@ const handlers = {
         const { defaultCompanies, companiesToChoose } = payload;
         return {...state, defaultCompanies, companiesToChoose}
         },
+    [SET_ERROR]: (state, { payload }) => ({...state, validationError: payload}),
     DEFAULT: state => state
 };
 

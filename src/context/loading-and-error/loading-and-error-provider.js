@@ -14,7 +14,7 @@ const LoadingAndErrorProvider = ({ children }) => {
 
     const disableLoading = () => dispatch({type: DISABLE_LOADING});
     const setLoading = () => dispatch({type: SET_LOADING});
-    const handleError = (err) => {
+    const handleError = err => {
         console.log(err);
         dispatch({
             type: SET_ERROR,

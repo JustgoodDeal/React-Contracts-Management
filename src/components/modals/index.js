@@ -1,12 +1,14 @@
 import ConfirmationModal from "./confirmation-modal";
-import HistoryDetailsModal from "./history-details-modal";
+import VersionsDetailsModal from "./versions-details-modal";
+import NotificationModal from './notification-modal'
 import SendingInvitationModal from "./sending-invitation-modal";
 import SendingMessageModal from "./sending-message-modal"
 
 
 export {
     ConfirmationModal,
-    HistoryDetailsModal,
+    VersionsDetailsModal,
+    NotificationModal,
     SendingMessageModal,
     SendingInvitationModal
 };

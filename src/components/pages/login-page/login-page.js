@@ -2,7 +2,7 @@ import React, {useContext, useReducer} from 'react';
 import { useHistory } from "react-router-dom";
 
 import CmService from "../../../services";
-import { AuthContext, LoadingAndErrorContext } from "../../../context";
+import { AuthContext, LoadingAndErrorContext, NavbarContext } from "../../../context";
 import { CHANGE_USERNAME, SET_USER_NOT_EXIST } from "../../../reducers/types";
 import { LoginReducer } from "../../../reducers";
 import ErrorIndicator from "../../error-indicator";
@@ -19,9 +19,11 @@ const LoginPage = () => {
     const [state, dispatch] = useReducer(LoginReducer, initialState);
     const { userExist, userName } = state;
 
-    const service = new CmService();
-    const { error, handleError } = useContext(LoadingAndErrorContext);
     const { logIn } = useContext(AuthContext);
+    const { error, handleError } = useContext(LoadingAndErrorContext);
+    const { changeActiveLink } = useContext(NavbarContext);
+
+    const service = new CmService();
 
     let history = useHistory();
 
@@ -31,6 +33,7 @@ const LoginPage = () => {
             .then((user_id) => {
                 if (user_id) {
                     logIn({userName, user_id});
+                    changeActiveLink('Home');
                     history.push('/');
                 } else {
                     dispatch({

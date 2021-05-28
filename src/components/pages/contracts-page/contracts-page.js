@@ -1,6 +1,7 @@
 import React, { Fragment, useContext, useEffect, useReducer } from 'react';
 
-import { AuthContext, LoadingAndErrorContext } from '../../../context'
+import { Paginator } from '../../hoc';
+import { AuthContext, LoadingAndErrorContext, PaginationAndSortingContext } from '../../../context'
 import CmService from '../../../services'
 import { CLEAR_CONTRACT_TO_DELETE, FETCH_CONTRACTS_SUCCESS, SET_CONTRACT_TO_DELETE } from '../../../reducers/types'
 import { ContractsRow, HeaderRow } from '../../table-rows'
@@ -20,10 +21,26 @@ const ContractsPage = () => {
     };
     const [state, dispatch] = useReducer(ContractsReducer, initialState);
 
-    const service = new CmService();
     const { loading, error, disableLoading, setLoading, handleError } = useContext(LoadingAndErrorContext);
-
     const { userId } = useContext(AuthContext);
+    const { currentPage, pagesCount, perPage, fieldName, reverse, setCurrentPageAndPagesCount,
+        handleFieldClick } = useContext(PaginationAndSortingContext);
+
+    const service = new CmService();
+
+    const getContracts = () => {
+        setLoading();
+        service.getContracts(userId, currentPage, perPage, fieldName, reverse)
+            .then(({ currentPage: page, pagesCount: pages, contracts }) => {
+                disableLoading();
+                setCurrentPageAndPagesCount(page, pages);
+                dispatch({
+                    type: FETCH_CONTRACTS_SUCCESS,
+                    payload: contracts
+                })
+            })
+            .catch(handleError)
+    };
 
     const handleDeleteClick = id => {
         dispatch({
@@ -34,22 +51,13 @@ const ContractsPage = () => {
 
     const confirmDelete = () => {
         service.deleteContract(state.contractToDelete)
-            .then((result) => {
+            .then(result => {
                 if (result === 'Deleted') {
                     setTimeout(() => {
                         dispatch({
                             type: CLEAR_CONTRACT_TO_DELETE
                         });
-                        setLoading();
-                        service.getContracts(userId)
-                            .then((contracts) => {
-                                disableLoading();
-                                dispatch({
-                                    type: FETCH_CONTRACTS_SUCCESS,
-                                    payload: contracts
-                                })
-                            })
-                            .catch(handleError)
+                        getContracts()
                     }, 500);
                 }
             })
@@ -63,19 +71,8 @@ const ContractsPage = () => {
     };
 
     useEffect(() => {
-        setLoading();
-        service.getContracts(userId)
-            .then((contracts) => {
-                disableLoading();
-                dispatch({
-                    type: FETCH_CONTRACTS_SUCCESS,
-                    payload: contracts
-                })
-            })
-            .catch(handleError)
-    }, []);
-
-    const { contracts } = state;
+        getContracts()
+    }, [currentPage, pagesCount, perPage, fieldName, reverse]);
 
     if (error) {
         return <ErrorIndicator />
@@ -84,33 +81,45 @@ const ContractsPage = () => {
         return <Spinner />
     }
 
-    const thLabels = ['ID', 'Creation date', 'Companies involved', 'Status', 'Actions'];
+    const { contracts } = state;
+    const tableHeaders = [
+        {label: 'ID', name: '_id', clickHandler: true},
+        {label: 'Creation date', name: 'creation_date', clickHandler: true},
+        {label: 'Companies involved', clickHandler: false},
+        {label: 'Status', name: 'status', clickHandler: true},
+        {label: 'Actions', clickHandler: false}
+    ];
     return (
         <Fragment>
-            <table className="table mt-4">
-                <thead>
-                <HeaderRow
-                    labels={thLabels} />
-                </thead>
-                <tbody>
-                {
-                    contracts.map((contract) => {
-                        return (
-                            <ContractsRow
-                                key={contract.id}
-                                contract={contract}
-                                handleDeleteClick={handleDeleteClick} />
-                        )
-                    })
-                }
-                </tbody>
-            </table>
-            <ConfirmationModal
-                id='confirmationModal'
-                bodyText='Selected contract will be permanently removed'
-                btnText='Remove'
-                handleCancel={cancelDelete}
-                handleConfirm={confirmDelete} />
+            <Paginator
+                recordName="Contracts" >
+                <table className="table mt-4">
+                    <thead>
+                        <HeaderRow
+                            headers={tableHeaders}
+                            handleFieldClick={handleFieldClick} />
+                    </thead>
+                    <tbody>
+                    {
+                        contracts.map((contract) => {
+                            return (
+                                <ContractsRow
+                                    key={contract.id}
+                                    contract={contract}
+                                    handleDeleteClick={handleDeleteClick} />
+                            )
+                        })
+                    }
+                    </tbody>
+                </table>
+                <ConfirmationModal
+                    id='confirmationModal'
+                    headerText='Are you sure?'
+                    bodyText='Selected contract will be permanently removed'
+                    btnText='Remove'
+                    handleCancel={cancelDelete}
+                    handleConfirm={confirmDelete} />
+            </Paginator>
         </Fragment>
     )
 };

@@ -1,1 +1,7 @@
-
+.ck-content {
+    min-height: 300px;
+}
+.contract-text {
+    min-width: 75%;
+    max-width: 75%;
+}

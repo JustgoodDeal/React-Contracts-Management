@@ -1,9 +1,11 @@
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import { CKEditor } from '@ckeditor/ckeditor5-react'
 import React, { useContext, useEffect, useReducer } from 'react';
 import { useHistory } from "react-router-dom";
 
-import { AuthContext, LoadingAndErrorContext } from '../../../context'
+import { AuthContext, LoadingAndErrorContext, NavbarContext } from '../../../context'
 import CmService from '../../../services'
-import { ADD_CONTRACT_COMPANIES, CHANGE_CONTRACT_TEXT, FETCH_COMPANIES_SUCCESS } from '../../../reducers/types'
+import { ADD_CONTRACT_COMPANIES, CHANGE_CONTRACT_TEXT, FETCH_COMPANIES_SUCCESS, SET_ERROR } from '../../../reducers/types'
 import { ContractCreationReducer } from '../../../reducers'
 import ErrorIndicator from "../../error-indicator";
 import Spinner from "../../spinner";
@@ -19,19 +21,32 @@ const ContractCreationPage = () => {
             text: '',
             companies: []
         },
+        validationError: ''
     };
     const [state, dispatch] = useReducer(ContractCreationReducer, initialState);
 
-    const service = new CmService();
     const { loading, error, disableLoading, setLoading, handleError } = useContext(LoadingAndErrorContext);
-
+    const { changeActiveLink } = useContext(NavbarContext);
     const { userId } = useContext(AuthContext);
-
     let history = useHistory();
+
+    const service = new CmService();
 
     const contractIsValid = () => {
         const { defaultCompanies, contract: {text, companies}  } = state;
-        const companiesInvolvedNumber = defaultCompanies.length +companies.length;
+        const companiesInvolvedNumber = defaultCompanies.length + companies.length;
+        let errorText = '';
+        if (!text) {
+            errorText = "Contract text can't be empty"
+        } else if (companiesInvolvedNumber < 2) {
+            errorText = "Contract should be drawn up between 2 companies or more"
+        }
+        if (errorText) {
+            dispatch({
+                type: SET_ERROR,
+                payload: errorText
+            });
+        }
         return !!(text && companiesInvolvedNumber >= 2);
     };
 
@@ -51,10 +66,10 @@ const ContractCreationPage = () => {
         });
     };
 
-    const handleTextChange = event => {
+    const handleTextChange = (event, editor) => {
         dispatch({
             type: CHANGE_CONTRACT_TEXT,
-            payload: event.target.value
+            payload: editor.getData()
         });
     };
 
@@ -68,10 +83,12 @@ const ContractCreationPage = () => {
             });
             const chosenCompanies = companies.slice().concat(defaultCompaniesCopy);
             service.createContract({text, companies: chosenCompanies})
-                .then((result) => {
-                    if (result === 'Created') {
-                        setTimeout(() => history.push('/contracts'), 500);
-                    }
+                .then((contractId) => {
+                    const url = contractId ? `/contract/${contractId}` : "/contracts";
+                    setTimeout(() => {
+                        changeActiveLink('Contracts');
+                        history.push(url)
+                    }, 500);
                 })
                 .catch(handleError)
         }
@@ -97,19 +114,22 @@ const ContractCreationPage = () => {
         return <Spinner />
     }
 
-    const { defaultCompanies, companiesToChoose } = state;
+    const { defaultCompanies, companiesToChoose, validationError } = state;
     const defaultCompaniesNames = defaultCompanies.map((company) => company.name);
-
+    const validationDivClass = `alert alert-danger text-center ${validationError ? 'visible' : 'invisible'} mt-2`;
     return (
         <div>
             <div className="d-flex justify-content-center mt-5">
                 <button type="submit" className="btn btn-success" form="contractCreationForm">Create</button>
             </div>
+            < div className={validationDivClass} role="alert">
+                {validationError || 'Text'}
+            </div>
             <form id='contractCreationForm' onSubmit={handleFormSubmit}>
-                <div className="d-flex mt-5">
+                <div className="d-flex mt-2">
                     <div className="d-flex flex-column w-50">
                         <div>
-                            <p>Choose companies to deal with:</p>
+                            <p className="font-weight-bold">The companies to deal with:</p>
                             <p>{defaultCompaniesNames.join(', ')}</p>
                         </div>
                         <select className="custom-select w-50 pb-0" multiple id="companiesSelect"
@@ -127,10 +147,11 @@ const ContractCreationPage = () => {
                             }
                         </select>
                     </div>
-                    <div className="form-group w-100">
-                        <label htmlFor="contractText">Contract text</label>
-                        <textarea className="form-control" id="contractText" placeholder="Start typing here" style={{height: '300px'}}
-                        onChange={handleTextChange}></textarea>
+                    <div className="form-group contract-text">
+                        <p className="font-weight-bold text-center">Contract text:</p>
+                        <CKEditor
+                        editor={ClassicEditor}
+                        onChange={handleTextChange} />
                     </div>
                 </div>
             </form>

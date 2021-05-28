@@ -4,15 +4,16 @@ import './header-row.css';
 import TableHeader from "../../table-header";
 
 
-const HeaderRow = ({ labels }) => {
+const HeaderRow = ({ headers, handleFieldClick }) => {
     return (
         <tr>
             {
-                labels.map((label, ind) => {
+                headers.map((header, ind) => {
                     return (
                         <TableHeader
                             key={ind}
-                            label={label} />
+                            header={header}
+                            handleFieldClick={handleFieldClick} />
                     );
                 })
             }

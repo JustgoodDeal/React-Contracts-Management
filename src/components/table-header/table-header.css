@@ -1,1 +1,6 @@
-
+.label-link {
+    cursor: pointer;
+}
+.label-link:hover {
+    text-decoration: underline;
+}

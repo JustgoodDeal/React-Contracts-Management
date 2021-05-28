@@ -1,0 +1,6 @@
+.per-page p {
+    margin-bottom: 0;
+}
+.per-page select {
+    width: auto;
+}

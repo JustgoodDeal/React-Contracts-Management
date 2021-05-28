@@ -1,6 +1,9 @@
-.contract-history .table td {
+.contract-versions .table td {
     padding-bottom: 0;
 }
 .buttons button {
     margin-right: 20px;
+}
+.ck-content {
+    min-height: 300px;
 }

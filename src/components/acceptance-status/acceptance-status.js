@@ -12,7 +12,7 @@ const AcceptanceStatus = ({ companiesAcceptances }) => {
                     let colorClass = status === 'pending' ? 'text-warning': 'text-success';
                     return (
                         <p key={ind}>{companyName}:
-                            <span className={colorClass}>{status}</span>
+                            <span className={colorClass}> {status}</span>
                         </p>
                     )
                 })

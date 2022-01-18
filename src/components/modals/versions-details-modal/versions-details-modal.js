@@ -1,11 +1,13 @@
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
-import React from 'react';
+import React, { useRef } from 'react';
 
 import './versions-details-modal.css';
 
 
 const VersionsDetailsModal = ({ versionText }) => {
+    const toolbar = useRef(null);
+
     return (
         <div className="modal fade" id="versionsDetailsModal" tabIndex="-1" role="dialog"
              aria-hidden="true">
@@ -15,9 +17,16 @@ const VersionsDetailsModal = ({ versionText }) => {
                         <h5 className="modal-title">Selected contract version text</h5>
                     </div>
                     <div className="modal-body">
+                        <div ref={toolbar}>
+                        </div>
                         <div>
                             <CKEditor
-                                editor={ClassicEditor}
+                                editor={DecoupledEditor}
+                                onReady={editor => {
+                                    if (editor) {
+                                        toolbar.current.appendChild(editor.ui.view.toolbar.element)
+                                    }
+                                }}
                                 data={versionText}
                                 disabled={true} />
                         </div>

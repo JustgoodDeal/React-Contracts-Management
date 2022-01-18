@@ -30,9 +30,10 @@ const LoginPage = () => {
     const handleFormSubmit = event => {
         event.preventDefault();
         service.getUser(userName)
-            .then((user_id) => {
-                if (user_id) {
-                    logIn({userName, user_id});
+            .then(user => {
+                if (user) {
+                    const { userId, userRole } = user
+                    logIn({userName, userId, userRole});
                     changeActiveLink('Home');
                     history.push('/');
                 } else {

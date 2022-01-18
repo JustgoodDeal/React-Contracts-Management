@@ -8,7 +8,7 @@ export default class CmService {
         return await response.json();
     };
 
-    sendPostOrPutRequest = async (url, data, method) => {
+    sendRequestWithBody = async (url, data, method) => {
         const response = await fetch(url, {
             method,
             headers: {
@@ -34,6 +34,11 @@ export default class CmService {
 
     changeInvitationStatus = async (invitationId, newStatus) => {
         return await this.getResource(`/invitation/change/${invitationId}/${newStatus}`);
+    };
+
+    getComments = async contractId => {
+        const comments = await this.getResource(`/comments?contract_id=${contractId}`);
+        return comments.map(this._transformComment)
     };
 
     getCompanies = async userId => {
@@ -71,6 +76,10 @@ export default class CmService {
 
     getDialogVariants = async (contractId, userId) => {
         return await this.getResource(`/dialog/variants/${contractId}/${userId}`);
+    };
+
+    getEmployeesRoles = async userId => {
+        return await this.getResource(`/employees/roles/${userId}`);
     };
 
     getInvitations = async (contractId, userId, page, perPage, fieldName, reverse) => {
@@ -111,24 +120,40 @@ export default class CmService {
         return await this.getResource(`/items/check/${userId}`);
     };
 
+    createComment = async comment => {
+        return await this.sendRequestWithBody('/comment/create', comment, 'Post');
+    };
+
     createContract = async contract => {
-        return await this.sendPostOrPutRequest('/contract/create', contract, 'Post');
+        return await this.sendRequestWithBody('/contract/create', contract, 'Post');
     };
 
     createDialog = async dialogEntities => {
-        return await this.sendPostOrPutRequest('/dialog/create', dialogEntities, 'Post');
+        return await this.sendRequestWithBody('/dialog/create', dialogEntities, 'Post');
     };
 
     createInvitations = async invitationEntities => {
-        return await this.sendPostOrPutRequest('/invitations/create', invitationEntities, 'Post');
+        return await this.sendRequestWithBody('/invitations/create', invitationEntities, 'Post');
     };
 
     createMessage = async messageEntities => {
-        return await this.sendPostOrPutRequest('/message/create', messageEntities, 'Post');
+        return await this.sendRequestWithBody('/message/create', messageEntities, 'Post');
+    };
+
+    updateComment = async comment => {
+        return await this.sendRequestWithBody('/comment/update', comment, 'Put');
     };
 
     updateContract = async contract => {
-        return await this.sendPostOrPutRequest('/contract/update', contract, 'Put');
+        return await this.sendRequestWithBody('/contract/update', contract, 'Put');
+    };
+
+    updateEmployeesRoles = async employeesInfo => {
+        return await this.sendRequestWithBody('/employees/roles/update', employeesInfo, 'Put');
+    };
+
+    deleteComment = async commentInfo => {
+        return await this.sendRequestWithBody('/comment/delete', commentInfo, 'DELETE');
     };
 
     deleteContract = async contractId => {
@@ -178,6 +203,19 @@ export default class CmService {
             participants
         }
     };
+
+    _transformComment = comment => {
+        const { number, related_comments } = comment;
+        const relatedComments = related_comments.map(related_comment => {
+            const { id, author, text, creation_date } = related_comment
+            return {id, author, text, creationDate: creation_date}
+        })
+        return {
+            number,
+            relatedComments,
+            selected: false
+        }
+    }
 
     _transformInvitation = invitation => {
         const {

@@ -6,7 +6,7 @@ import ErrorBoundry from "../error-boundry";
 import { AuthContext, LoadingAndErrorProvider, NavbarProvider, PaginationAndSortingProvider } from '../../context';
 import Navbar from '../navbar';
 import { ContractCreationPage, ContractDetailsPage, ContractsPage, DialogPage, DialogsPage, HomePage, InvitationsPage,
-    LoginPage, NotFoundPage, NotificationsPage } from '../pages';
+    LoginPage, NotFoundPage, NotificationsPage, RolesPage } from '../pages';
 
 import './app.css';
 
@@ -17,7 +17,7 @@ const Switch = ({ children }) => (
 
 const App = () => {
 
-    const { userName } = useContext(AuthContext);
+    const { userName, userRole } = useContext(AuthContext);
 
     return (
         <ErrorBoundry>
@@ -42,6 +42,10 @@ const App = () => {
                                                 <Route path="/dialog/:id" component={DialogPage}/>
                                                 <Route path={["/notifications/contract/:id", "/notifications"]}
                                                        component={NotificationsPage} />
+                                                {
+                                                    (userRole === 'director') &&
+                                                    <Route path="/roles/manage" component={RolesPage}/>
+                                                }
                                             </Fragment>
                                         )
                                         : null

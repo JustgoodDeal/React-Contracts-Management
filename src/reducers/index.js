@@ -12,6 +12,7 @@ import { LoginReducer } from './login-reducer'
 import { NavbarReducer } from './navbar-reducer'
 import { NotificationsReducer } from './notifications-reducer'
 import { PaginationAndSortingReducer } from './pagination-and-sorting-reducer'
+import { RolesReducer } from './roles-reducer'
 
 
 export {
@@ -29,4 +30,5 @@ export {
     NavbarReducer,
     NotificationsReducer,
     PaginationAndSortingReducer,
+    RolesReducer
 };

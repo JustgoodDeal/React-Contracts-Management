@@ -9,17 +9,18 @@ const AuthProvider = ({ children }) => {
     const initialState = {
         userName: '',
         userId: '',
+        userRole: ''
     };
     const [state, dispatch] = useReducer(AuthReducer, initialState);
 
-    const logIn = (userInfo) => dispatch({type: SET_USER, payload: userInfo});
+    const logIn = userInfo => dispatch({type: SET_USER, payload: userInfo});
     const logOut = () => dispatch({type: CLEAR_USER});
 
-    const { userName, userId } = state;
+    const { userName, userId, userRole } = state;
 
     return (
         <AuthContext.Provider value={{
-            userName, userId, logIn, logOut
+            userName, userId, userRole, logIn, logOut
         }}>
             {children}
         </AuthContext.Provider>

@@ -51,8 +51,8 @@ const ContractsPage = () => {
 
     const confirmDelete = () => {
         service.deleteContract(state.contractToDelete)
-            .then(result => {
-                if (result === 'Deleted') {
+            .then(response => {
+                if (response === 'Deleted') {
                     setTimeout(() => {
                         dispatch({
                             type: CLEAR_CONTRACT_TO_DELETE
@@ -101,7 +101,7 @@ const ContractsPage = () => {
                     </thead>
                     <tbody>
                     {
-                        contracts.map((contract) => {
+                        contracts.map(contract => {
                             return (
                                 <ContractsRow
                                     key={contract.id}

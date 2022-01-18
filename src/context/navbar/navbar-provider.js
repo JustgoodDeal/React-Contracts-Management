@@ -15,6 +15,7 @@ const NavbarProvider = ({ children }) => {
         {linkTo: '/invitations', label: 'Invitations', className: 'nav-link', newItem: false},
         {linkTo: '/dialogs', label: 'Dialogs', className: 'nav-link', newItem: false},
         {linkTo: '/notifications', label: 'Notifications', className: 'nav-link', newItem: false},
+        {linkTo: '/roles/manage', label: 'Manage roles', className: 'nav-link', newItem: false},
         {label: 'Log in', className: 'nav-link'},
     ];
     const [state, dispatch] = useReducer(NavbarReducer, initialState);

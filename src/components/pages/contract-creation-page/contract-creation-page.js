@@ -1,10 +1,11 @@
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useRef } from 'react';
 import { useHistory } from "react-router-dom";
 
 import { AuthContext, LoadingAndErrorContext, NavbarContext } from '../../../context'
 import CmService from '../../../services'
+import { removeSpacesFromColorSubstrings } from '../../../utils'
 import { ADD_CONTRACT_COMPANIES, CHANGE_CONTRACT_TEXT, FETCH_COMPANIES_SUCCESS, SET_ERROR } from '../../../reducers/types'
 import { ContractCreationReducer } from '../../../reducers'
 import ErrorIndicator from "../../error-indicator";
@@ -31,6 +32,8 @@ const ContractCreationPage = () => {
     let history = useHistory();
 
     const service = new CmService();
+
+    const toolbar = useRef(null);
 
     const contractIsValid = () => {
         const { defaultCompanies, contract: {text, companies}  } = state;
@@ -69,7 +72,7 @@ const ContractCreationPage = () => {
     const handleTextChange = (event, editor) => {
         dispatch({
             type: CHANGE_CONTRACT_TEXT,
-            payload: editor.getData()
+            payload: removeSpacesFromColorSubstrings(editor.getData())
         });
     };
 
@@ -114,6 +117,9 @@ const ContractCreationPage = () => {
         return <Spinner />
     }
 
+
+
+
     const { defaultCompanies, companiesToChoose, validationError } = state;
     const defaultCompaniesNames = defaultCompanies.map((company) => company.name);
     const validationDivClass = `alert alert-danger text-center ${validationError ? 'visible' : 'invisible'} mt-2`;
@@ -149,9 +155,17 @@ const ContractCreationPage = () => {
                     </div>
                     <div className="form-group contract-text">
                         <p className="font-weight-bold text-center">Contract text:</p>
+                        <div ref={toolbar}>
+                        </div>
                         <CKEditor
-                        editor={ClassicEditor}
-                        onChange={handleTextChange} />
+                            editor={DecoupledEditor}
+                            onChange={handleTextChange}
+                            onReady={editor => {
+                                if (editor) {
+                                    toolbar.current.appendChild(editor.ui.view.toolbar.element)
+                                }
+                            }}
+                        />
                     </div>
                 </div>
             </form>

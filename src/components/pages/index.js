@@ -8,6 +8,7 @@ import InvitationsPage from "./invitations-page";
 import LoginPage from './login-page';
 import NotificationsPage from './notifications-page'
 import NotFoundPage from "./not-found-page";
+import RolesPage from "./roles-page";
 
 
 export {
@@ -20,5 +21,6 @@ export {
     InvitationsPage,
     LoginPage,
     NotFoundPage,
-    NotificationsPage
+    NotificationsPage,
+    RolesPage
 };

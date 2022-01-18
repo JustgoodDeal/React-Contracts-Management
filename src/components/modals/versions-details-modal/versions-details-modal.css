@@ -1,3 +1,6 @@
 #versionsDetailsModal textarea {
     background-color: white;
 }
+#versionsDetailsModal .ck-content {
+    border: solid 1px #adb5bd !important;
+}

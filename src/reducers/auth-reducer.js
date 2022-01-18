@@ -1,8 +1,11 @@
 import { SET_USER, CLEAR_USER } from './types'
 
 const handlers = {
-    [SET_USER]: (state, { payload }) => ({userName: payload.userName, userId: payload.user_id}),
-    [CLEAR_USER]: () => ({userName: '', userId: ''}),
+    [SET_USER]: (state, { payload }) => {
+        const { userName, userId, userRole } = payload
+        return {userName, userId, userRole}
+    },
+    [CLEAR_USER]: () => ({userName: '', userId: '', userRole: ''}),
     DEFAULT: state => state
 };
 

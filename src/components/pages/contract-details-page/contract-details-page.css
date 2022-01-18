@@ -6,4 +6,11 @@
 }
 .ck-content {
     min-height: 300px;
+    border: 1px solid royalblue !important;
+}
+.comment-datetime {
+    font-size: 14px;
+}
+.pointer {
+    cursor: pointer;
 }

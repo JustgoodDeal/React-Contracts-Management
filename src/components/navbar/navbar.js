@@ -9,7 +9,7 @@ import './navbar.css';
 
 
 const Navbar = () => {
-    const { userName, logOut } = useContext(AuthContext);
+    const { userName, userRole, logOut } = useContext(AuthContext);
     const { links, changeActiveLink, updateNewItems } = useContext(NavbarContext);
     const { clearPaginationAndSorting } = useContext(PaginationAndSortingContext);
     let history = useHistory();
@@ -40,6 +40,8 @@ const Navbar = () => {
         return () => clearInterval(backgroundInterval);
     }, [userName]);
 
+    const end = userRole === 'director' ? -1 : -2
+
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
             <div className="navbar-nav container-fluid justify-content-between">
@@ -53,7 +55,7 @@ const Navbar = () => {
                             <Fragment>
                                 <div className="d-flex flex-row" onClick={() => clearPaginationAndSorting()}>
                                     {
-                                        links.slice(1, -1).map((link, ind) => {
+                                        links.slice(1, end).map((link, ind) => {
                                             const { linkTo, className, label, newItem } = link;
                                             return (
                                                 <div key={ind} className="d-flex flex-column align-items-center">

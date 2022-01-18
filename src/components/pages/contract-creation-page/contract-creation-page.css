@@ -1,5 +1,6 @@
 .ck-content {
     min-height: 300px;
+    border: 1px solid royalblue !important;
 }
 .contract-text {
     min-width: 75%;
